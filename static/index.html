@@ -1,0 +1,75 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="css/chessboard-0.3.0.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/thchess.js"></script>
+    <script src="/js/chessboard.js"></script>
+    <script src="/js/client.js"></script>
+    <script src="/js/game.js"></script>
+    <!-- BOOTSTRAP begin-->
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="css/jumbotron-narrow.css" />
+    <!-- end -->
+  </head>
+  <body>
+    <div class="container">
+      <div class="header clearfix">
+        <nav hidden>
+          <ul class="nav nav-pills pull-right">
+            <li role="presentation" class="active"><a href="#">Home</a></li>
+            <li role="presentation"><a href="#">About</a></li>
+          </ul>
+        </nav>
+        <h3 class="text-muted">TH CHESS</h3>
+      </div>
+
+      <div class="page login" id='page-login'>
+        <div class="jumbotron">
+          <h1>Sign Up</h1>
+          <p class="lead">text text text...</p>
+          <p>
+            <a class="btn btn-lg btn-success" href="#" role="button" onclick="LoginGuest();">Play as Guest</a></p>
+        </div>
+      </div>
+
+      <div class="page opening" id='page-opening' hidden>
+        <div class="jumbotron">
+          <h1 id='greeting'></h1>
+          <h2 id='userLabel'></h2>
+          <p>
+            <a class="btn btn-lg btn-primary" href="#" role="button" onclick="Play();">PlayNow</a>
+          </p>
+        </div>
+      </div>
+
+      <div class="page game" id='page-game' hidden>
+        <button id='game-back'>Back</button>
+        <button id='game-quit'>Resign</button>
+        <p>Opponent: <span id="opponent"></span></p>
+        <div id="board" style="width: 400px"></div>
+        <p>Status: <span id="status"></span></p>
+        <p>FEN: <span id="fen"></span></p>
+        <p>PGN: <span id="pgn"></span></p>
+      </div>
+
+      <footer class="footer">
+        <p>&copy; 2016 auycro.github.io, all rights reserved.</p>
+      </footer>
+
+    </div> <!-- /container -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      ga('create', 'UA-66921011-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>
