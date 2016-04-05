@@ -113,7 +113,14 @@ io.on('connection', function(socket) {
 
     socket.on("resign", function(msg) {
         console.log('resign '+msg.color);
-        socket.emit('resign', msg.color);
+        socket.emit('resign', {color: msg.color});
+        if (msg.color == 'white'){
+            var user_id = activeGames[msg.gameId].users.black;
+        } else {
+            var user_id = activeGames[msg.gameId].users.white;
+        }
+        users_connections[user_id].emit('resign', {color: msg.color});
+        //var user_id = activeGames[msg.gameId].users.
     });    
 
     socket.on("disconnect", function(s) {

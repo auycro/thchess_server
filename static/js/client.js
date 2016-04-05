@@ -42,9 +42,16 @@ socket.on('move', function (move) {
     updateStatus();
   }
 });
-socket.on('resign', function (move) {
+socket.on('resign', function (msg) {
+  console.log('resign');
   $('#page-game').hide();
   $('#page-opening').show();
+
+  if (player_color == msg.color){
+    $('#greeting').text('resign!!');
+  } else {
+    $('#greeting').text('opponent resign!!'); 
+  }
 });
 
 //MENU
