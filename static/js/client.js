@@ -50,9 +50,9 @@ socket.on('resign', function (msg) {
   $('#page-opening').show();
 
   if (player_color == msg.color){
-    $('#greeting').text('resign!!');
+    $('#greeting').text('คุณแพ้!!');
   } else {
-    $('#greeting').text('opponent resign!!'); 
+    $('#greeting').text('คุณชนะ!!'); 
   }
 });
 
@@ -78,7 +78,7 @@ function Play() {
 }
 //UTIL
 function GetGreeting(){
-  var greeting = "Hello!!";
+  var greeting = "สวัสดี!!";
   return greeting;
 }
 //Resign

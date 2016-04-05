@@ -22,7 +22,6 @@ app.get('/game', function(req, res) {
 io.on('connection', function(socket) {
     user_count += 1;
     console.log("user_count: "+user_count);
-
     console.log('new connection ' + socket.id);
     
     socket.on('message', function(msg) {
@@ -48,11 +47,9 @@ io.on('connection', function(socket) {
     });
 
     socket.on('playnow',function(mode){
-        console.log(socket.userId + ' is login');
         var open_new_game = true;
         //FIND AVAILABLE GAME
         if (Object.keys(openGames).length > 0){
-            //var arr = Array.prototype.slice.call( Object.keys(openGames) );
             for (var i=0;i<Object.keys(openGames).length;i++){
                 var game = openGames[i+1];
                 if (game.users.white == null) {
@@ -101,29 +98,39 @@ io.on('connection', function(socket) {
     });
 
     socket.on('move', function(move) {
-        console.log('Got move from client: ' + move.move);
+        //console.log('Got move from client: ' + move.move);
         socket.broadcast.emit('move', move);
         activeGames[move.gameId].board = move.board;
-        //game_id = users[socket.userId].gameid;
     });
 
     socket.on("resign", function(msg) {
         console.log('resign '+msg.color);
-        socket.emit('resign', {color: msg.color});
+        
+        openGames[msg.gameId].users.white = 'game_end';
+        openGames[msg.gameId].users.black = 'game_end';
 
         if (activeGames[msg.gameId]==null){
-            openGames[msg.gameId].users.white = 'resign';
-            openGames[msg.gameId].users.black = 'resign';
             //do nothing;
         } else if ((msg.color == 'white')&&(activeGames[msg.gameId]!=null)){
             var user_id = activeGames[msg.gameId].users.black;
-            users_connections[user_id].emit('resign', {color: msg.color});
+            if (users_connections[user_id] != null){
+                users_connections[user_id].emit('resign', {color: msg.color});
+                socket.emit('resign', {color: msg.color});  
+            } else {
+                socket.emit('resign', {color: 'black'});
+            }
             delete activeGames[msg.gameId];
         } else if ((msg.color == 'black')&&(activeGames[msg.gameId]!=null)){
             var user_id = activeGames[msg.gameId].users.white;
-            users_connections[user_id].emit('resign', {color: msg.color});
+            if (users_connections[user_id] != null){
+                users_connections[user_id].emit('resign', {color: msg.color});
+                socket.emit('resign', {color: msg.color});
+            } else {
+                socket.emit('resign', {color: 'white'});
+            }
             delete activeGames[msg.gameId];
         }
+
     });    
 
     socket.on("disconnect", function(s) {
