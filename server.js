@@ -105,7 +105,8 @@ io.on('connection', function(socket) {
 
     socket.on("resign", function(msg) {
         console.log('resign '+msg.color);
-        
+        socket.emit('resign', {color: msg.color});  
+
         openGames[msg.gameId].users.white = 'game_end';
         openGames[msg.gameId].users.black = 'game_end';
 
@@ -115,18 +116,12 @@ io.on('connection', function(socket) {
             var user_id = activeGames[msg.gameId].users.black;
             if (users_connections[user_id] != null){
                 users_connections[user_id].emit('resign', {color: msg.color});
-                socket.emit('resign', {color: msg.color});  
-            } else {
-                socket.emit('resign', {color: 'black'});
             }
             delete activeGames[msg.gameId];
         } else if ((msg.color == 'black')&&(activeGames[msg.gameId]!=null)){
             var user_id = activeGames[msg.gameId].users.white;
             if (users_connections[user_id] != null){
                 users_connections[user_id].emit('resign', {color: msg.color});
-                socket.emit('resign', {color: msg.color});
-            } else {
-                socket.emit('resign', {color: 'white'});
             }
             delete activeGames[msg.gameId];
         }
