@@ -6,8 +6,19 @@ socket.on('login', function (res) {
   console.log("session="+res.session);
   session = res.session;
 });
-socket.on('startgame', function (res){
-  console.log("joined as game id: " + res.game.id );
+
+socket.on('joingame', function (res) {
+  console.log("join as game id: " + res.game.id );
+
+  if (player_color == 'white'){
+    $('#opponentId').text(res.game.users.black);
+  } else {
+    $('#opponentId').text(res.game.users.white);    
+  }
+});
+
+socket.on('startgame', function (res) {
+  console.log("start as game id: " + res.game.id );
   console.log("color="+res.color);
 
   player_color = res.color;
@@ -15,6 +26,14 @@ socket.on('startgame', function (res){
 
   $('#page-opening').hide();
   $('#page-game').show();
+
+  if (player_color == 'white'){
+    $('#playerId').text(res.game.users.white);
+    $('#opponentId').text(res.game.users.black);
+  } else {
+    $('#playerId').text(res.game.users.black);
+    $('#opponentId').text(res.game.users.white);    
+  }
 });
 socket.on('move', function (move) {
   if (serverGame && move.gameId === serverGame.id) {
@@ -55,7 +74,7 @@ function GetGreeting(){
 }
 //Resign
 function Resign(){
-  socket.emit('resign', {userId: username, gameId: serverGame.id});
+  socket.emit('resign', {gameId: serverGame.id, color: player_color});
 }
 //SendMove
 function SendMove(move){

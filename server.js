@@ -24,6 +24,7 @@ app.get('/game', function(req, res) {
 io.on('connection', function(socket) {
     user_count += 1;
     console.log("user_count: "+user_count);
+
     console.log('new connection ' + socket.id);
     
     socket.on('message', function(msg) {
@@ -45,7 +46,7 @@ io.on('connection', function(socket) {
             });
         }
 
-        socket.emit('login', {session: socket.id});
+        socket.emit('login', {session: socket.id ,user_count: user_count});
     });
 
     socket.on('playnow',function(mode){
@@ -60,12 +61,13 @@ io.on('connection', function(socket) {
                     game.users.white = socket.userId;
                     users[game.users.white].games[game.id] = game.id;
                     socket.emit('startgame', {game: game, color: 'white'});
-
+                    users_connections[game.users.black].emit('joingame',{game: game});
                     open_new_game = false;
                 } else if (game.users.black == null) {
                     game.users.black = socket.userId;
                     users[game.users.black].games[game.id] = game.id;
                     socket.emit('startgame', {game: game, color: 'black'});
+                    users_connections[game.users.white].emit('joingame',{game: game});
                     open_new_game = false;
                 }
 
@@ -109,8 +111,9 @@ io.on('connection', function(socket) {
         //game_id = users[socket.userId].gameid;
     });
 
-    socket.on("resign", function(s) {
-
+    socket.on("resign", function(msg) {
+        console.log('resign '+msg.color);
+        socket.emit('resign', msg.color);
     });    
 
     socket.on("disconnect", function(s) {
