@@ -34,6 +34,8 @@ socket.on('startgame', function (res) {
     $('#playerId').text(res.game.users.black);
     $('#opponentId').text(res.game.users.white);    
   }
+
+  $('#gameId').text(res.game.id);
 });
 socket.on('move', function (move) {
   if (serverGame && move.gameId === serverGame.id) {

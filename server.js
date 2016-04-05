@@ -9,9 +9,7 @@ var port = process.env.PORT || 3000;
 var users = {};
 var users_connections = {};
 
-var openGames = [];
-var openGames_index = 0;
-
+var openGames = {};
 var activeGames = {};
 
 var game_id = 0;
@@ -53,9 +51,10 @@ io.on('connection', function(socket) {
         console.log(socket.userId + ' is login');
         var open_new_game = true;
         //FIND AVAILABLE GAME
-        if (openGames.length> 0) {
-            for (var i=openGames_index;i<openGames.length;i++){
-                var game = openGames[i];
+        if (Object.keys(openGames).length > 0){
+            //var arr = Array.prototype.slice.call( Object.keys(openGames) );
+            for (var i=0;i<Object.keys(openGames).length;i++){
+                var game = openGames[i+1];
                 if (game.users.white == null) {
                     socket.gameId = game.id;
                     game.users.white = socket.userId;
@@ -73,7 +72,6 @@ io.on('connection', function(socket) {
 
                 if (open_new_game == false) {
                     activeGames[game.id] = game;
-                    openGames_index = 1; 
                     break;
                 }
             }
@@ -98,10 +96,8 @@ io.on('connection', function(socket) {
                 users[game.users.black].games[game.id] = game.id;
                 socket.emit('startgame', {game: game, color: 'black'});
             }
-            //openGames[game.id] = game;
-            openGames.push(game);
+            openGames[game.id] = game;
         }
-
     });
 
     socket.on('move', function(move) {
@@ -114,13 +110,20 @@ io.on('connection', function(socket) {
     socket.on("resign", function(msg) {
         console.log('resign '+msg.color);
         socket.emit('resign', {color: msg.color});
-        if (msg.color == 'white'){
+
+        if (activeGames[msg.gameId]==null){
+            openGames[msg.gameId].users.white = 'resign';
+            openGames[msg.gameId].users.black = 'resign';
+            //do nothing;
+        } else if ((msg.color == 'white')&&(activeGames[msg.gameId]!=null)){
             var user_id = activeGames[msg.gameId].users.black;
-        } else {
+            users_connections[user_id].emit('resign', {color: msg.color});
+            delete activeGames[msg.gameId];
+        } else if ((msg.color == 'black')&&(activeGames[msg.gameId]!=null)){
             var user_id = activeGames[msg.gameId].users.white;
+            users_connections[user_id].emit('resign', {color: msg.color});
+            delete activeGames[msg.gameId];
         }
-        users_connections[user_id].emit('resign', {color: msg.color});
-        //var user_id = activeGames[msg.gameId].users.
     });    
 
     socket.on("disconnect", function(s) {
