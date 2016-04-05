@@ -7,9 +7,10 @@ var io = require('socket.io')(http);
 var port = process.env.PORT || 3000;
 
 var users = {};
+var users_connections = {};
 
-var openGames = {};
-var openGames_users = {};
+var openGames = [];
+var openGames_index = 0;
 
 var activeGames = {};
 
@@ -17,7 +18,6 @@ var game_id = 0;
 var user_count = 0;
 
 app.get('/game', function(req, res) {
-    //res.sendFile(__dirname + '/static/index.html');
     res.sendFile(__dirname + '/static/game.html');
 });
 
@@ -26,9 +26,8 @@ io.on('connection', function(socket) {
     console.log("user_count: "+user_count);
     console.log('new connection ' + socket.id);
     
-
     socket.on('message', function(msg) {
-    	console.log('Got message from client: ' + msg);
+        console.log('Got message from client: ' + msg);
     });
 
     socket.on('login',function(userId){
@@ -38,6 +37,7 @@ io.on('connection', function(socket) {
         if (!users[userId]) {    
             console.log('creating new user');
             users[userId] = {userId: socket.userId, games:{}};
+            users_connections[userId] = socket;
         } else {
             console.log('user found!');
             Object.keys(users[userId].games).forEach(function(gameId) {
@@ -49,18 +49,20 @@ io.on('connection', function(socket) {
     });
 
     socket.on('playnow',function(mode){
-
+        console.log(socket.userId + ' is login');
         var open_new_game = true;
         //FIND AVAILABLE GAME
-        if (openGames.length > 0) {
-            openGames.forEach(function(game) {
+        if (openGames.length> 0) {
+            for (var i=openGames_index;i<openGames.length;i++){
+                var game = openGames[i];
                 if (game.users.white == null) {
                     socket.gameId = game.id;
                     game.users.white = socket.userId;
                     users[game.users.white].games[game.id] = game.id;
                     socket.emit('startgame', {game: game, color: 'white'});
+
                     open_new_game = false;
-                } else if (game.users.white == null) {
+                } else if (game.users.black == null) {
                     game.users.black = socket.userId;
                     users[game.users.black].games[game.id] = game.id;
                     socket.emit('startgame', {game: game, color: 'black'});
@@ -68,10 +70,11 @@ io.on('connection', function(socket) {
                 }
 
                 if (open_new_game == false) {
-                    delete openGames[game.users.white];
                     activeGames[game.id] = game;
+                    openGames_index = 1; 
+                    break;
                 }
-            });
+            }
         }
 
         //NEW GAME
@@ -93,17 +96,22 @@ io.on('connection', function(socket) {
                 users[game.users.black].games[game.id] = game.id;
                 socket.emit('startgame', {game: game, color: 'black'});
             }
-            openGames[game.id] = game;
-            openGames_users[socket.userId] = socket;
+            //openGames[game.id] = game;
+            openGames.push(game);
         }
 
     });
 
     socket.on('move', function(move) {
-    	console.log('Got move from client: ' + move.color);
-    	socket.broadcast.emit('move', move);
-    	//socket.emit('move', move);
+        console.log('Got move from client: ' + move.move);
+        socket.broadcast.emit('move', move);
+        activeGames[move.gameId].board = move.board;
+        //game_id = users[socket.userId].gameid;
     });
+
+    socket.on("resign", function(s) {
+
+    });    
 
     socket.on("disconnect", function(s) {
         user_count -= 1;

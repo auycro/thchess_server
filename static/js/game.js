@@ -6,18 +6,18 @@ var player_color;
 var serverGame;
 
 var greySquare = function(square) {
-	var squareEl = $('#board .square-' + square);
+  var squareEl = $('#board .square-' + square);
   
-  	var background = '#a9a9a9';
-  	if (squareEl.hasClass('black-3c85d') === true) {
-    	background = '#696969';
-  	}
+    var background = '#a9a9a9';
+    if (squareEl.hasClass('black-3c85d') === true) {
+      background = '#696969';
+    }
 
-  	squareEl.css('background', background);
+    squareEl.css('background', background);
 };
 
 var removeGreySquares = function() {
-  	$('#board .square-55d63').css('background', '');
+    $('#board .square-55d63').css('background', '');
 };
 
 // do not pick up pieces if the game is over
@@ -113,7 +113,7 @@ var updateStatus = function() {
 var init = function(serverGameState) {
   serverGame = serverGameState; 
 
-	var	TH_CHESS_DEFAULT_POSITION = 'rnbqkbnr/8/pppppppp/8/8/PPPPPPPP/8/RNBKQBNR';
+  var TH_CHESS_DEFAULT_POSITION = 'rnbqkbnr/8/pppppppp/8/8/PPPPPPPP/8/RNBKQBNR';
 
   var cfg = {
     orientation: player_color,
@@ -130,7 +130,7 @@ var init = function(serverGameState) {
   game = serverGame.board ? new Chess(serverGame.board) : new Chess();
   board =  new ChessBoard('board', cfg);
 
-	updateStatus();
+  updateStatus();
 };
 
 $(document).ready(init);

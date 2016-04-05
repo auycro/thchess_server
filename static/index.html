@@ -50,10 +50,11 @@
       </div>
 
       <div class="page game" id='page-game' hidden>
-        <!--button id='game-back'>Back</button>
-        <button id='game-quit'>Resign</button-->
+        <!--button id='game-back'>Back</button-->
+        <!--button id='game-quit' href="#" onclick="Resign();">Resign</button-->
         <p>Opponent: <span id="opponent"></span></p>
         <div id="board" style="width: 400px"></div>
+        <p>Player: <span id="player"></span></p>
         <p>Status: <span id="status"></span></p>
         <p>FEN: <span id="fen"></span></p>
         <p>PGN: <span id="pgn"></span></p>
@@ -69,8 +70,10 @@
       (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
       m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
       })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-      ga('create', 'UA-66921011-1', 'auto');
+
+      ga('create', 'UA-66921011-2', 'auto');
       ga('send', 'pageview');
+
     </script>
   </body>
 </html>
