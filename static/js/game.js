@@ -116,6 +116,7 @@ var init = function(serverGameState) {
   var TH_CHESS_DEFAULT_POSITION = 'rnbqkbnr/8/pppppppp/8/8/PPPPPPPP/8/RNBKQBNR';
 
   var cfg = {
+    pieceTheme: 'img/chesspieces/thai_chess/{piece}.png',
     orientation: player_color,
     position: serverGameState.board ? serverGame.board : TH_CHESS_DEFAULT_POSITION,
     draggable: true,

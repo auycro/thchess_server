@@ -1,6 +1,7 @@
 'use strict';
 var session = '';
 var socket = io(); //io.connect('locahost:3000', {'sync disconnect on unload': true });
+var player_color = '';
 socket.on('login', function (res) {
   console.log("session="+res.session);
   session = res.session;
